@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  red-app:
+    build: ./red
+    image: trafficlight/red:v1.0
+    networks:
+      - traffic-light
+
+  yellow-app:
+    build: ./yellow
+    image: trafficlight/yellow:v1.0
+    networks:
+      - traffic-light
+
+  green-app:
+    build: ./green
+    image: trafficlight/green:v1.0
+    networks:
+      - traffic-light
+
+  nginx-load-balancer:
+    image: nginx
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - "3000:3000"
+    networks:
+      - traffic-light
+
+networks:
+  traffic-light:
+    ipam:
+      config:
+        - subnet: "172.20.0.0/16"
+          gateway: "172.20.0.1"
